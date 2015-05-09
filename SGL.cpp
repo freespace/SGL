@@ -174,12 +174,13 @@ void SGL::fillTraingle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,uint16
 
 void SGL::drawChar(uint8_t ascii, uint16_t x, uint16_t y, uint16_t size, uint16_t color)
 {
-    if((ascii<32)||(ascii>=127)){
-        return;
-    }
+    if (ascii<' ') return;
+    ascii -= ' ';
+
+    if (ascii >= SGL_NUM_CHARS) return;
 
     for (int8_t i = 0; i < FONT_X; i++ ) {
-        int8_t temp = pgm_read_byte(&simpleFont[ascii-0x20][i]);
+        int8_t temp = pgm_read_byte(&simpleFont[ascii][i]);
         int8_t inrun = 0;
         int8_t runlen = 0;
         int8_t endrun = 0;
@@ -203,7 +204,7 @@ void SGL::drawChar(uint8_t ascii, uint16_t x, uint16_t y, uint16_t size, uint16_
                 // edge-triggered nature of this algorithm
                 f += 1;
             }
-            
+
             if (endrun) {
                 fillRectangle(x+i*size, y+(f-runlen)*size, size, runlen*size, color);
                 inrun = 0;
